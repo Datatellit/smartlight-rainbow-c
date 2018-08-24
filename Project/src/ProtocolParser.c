@@ -258,7 +258,10 @@ uint8_t ParseProtocol(){
   case C_SET:
     if( (IS_MINE_SUBID(_sensor) || _specificNode) && !_isAck ) {
       uint8_t _lenPayl = miGetLength();
-      stopAllStateTimer();
+      if(gConfig.filter > 0)
+      {
+        stopAllStateTimer();
+      }   
       if( _type == V_STATUS ) {
         if( _lenPayl == 1)
         { 
@@ -373,7 +376,7 @@ uint8_t ParseProtocol(){
         
         bool _OnOff = rcvMsg.payload.data[1];
         uint8_t _Brightness = rcvMsg.payload.data[2];
-        uint16_t _CCTValue = rcvMsg.payload.data[4] * 256 + rcvMsg.payload.data[3];
+        uint16_t _CCTValue = rcvMsg.payload.data[3] * 256 + rcvMsg.payload.data[4];
         if( IS_SUNNY(gConfig.type) ) {         
           if( _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || _CCTValue != RINGST_WarmCold(r_index) ) {
             SetDeviceStatus(_OnOff, _Brightness, _CCTValue, _RingID);

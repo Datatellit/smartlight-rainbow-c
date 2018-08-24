@@ -457,7 +457,7 @@ void LoadConfig()
 #endif
   }
   if(gConfig.rptTimes == 0 ) gConfig.rptTimes = 2;
-  gConfig.rfChannel = 0x73;
+  gConfig.rfChannel = 85;
 }
 
 void ResetNodeToRegister()

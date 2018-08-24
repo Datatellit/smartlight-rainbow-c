@@ -1696,10 +1696,10 @@
         <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\FlashDataStorage.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\MyMessage.h</name>
+        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\LightPublicDefine.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\publicDefine.h</name>
+        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\MyMessage.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\rf24l01.c</name>

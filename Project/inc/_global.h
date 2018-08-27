@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "stm8s_conf.h"
-#include "publicDefine.h"
+#include "LightPublicDefine.h"
 
 /* Exported types ------------------------------------------------------------*/
 // Simple Direct Test
@@ -23,64 +23,11 @@
 //#define EN_SENSOR_MQ2
 //#define EN_SENSOR_MQ7
 
-
-// Switch value for set power command
-#define DEVICE_SW_OFF               0       // Turn Off
-#define DEVICE_SW_ON                1       // Turn On
-#define DEVICE_SW_TOGGLE            2       // Toggle
-#define DEVICE_SW_DUMMY             3       // Detail followed
-
-// Update operator for set brightness & CCT command
-#define OPERATOR_SET                0
-#define OPERATOR_ADD                1
-#define OPERATOR_SUB                2
-#define OPERATOR_MUL                3
-#define OPERATOR_DIV                4
-
-// Filter (special effect)
-#define FILTER_SP_EF_NONE           0
-#define FILTER_SP_EF_BREATH         1       // Normal breathing light
-#define FILTER_SP_EF_FAST_BREATH    2       // Fast breathing light
-#define FILTER_SP_EF_FLORID         3       // Randomly altering color
-#define FILTER_SP_EF_FAST_FLORID    4       // Fast randomly altering color
-
 // Serial Command
 #define UART_CMD_HELLO                  0
 #define UART_CMD_CCT                    1
 #define UART_CMD_RGBW                   2
 #define UART_CMD_HELLO_ACK              16
-
-// Node type
-#define NODE_TYP_GW               'g'
-#define NODE_TYP_LAMP             'l'
-#define NODE_TYP_REMOTE           'r'
-#define NODE_TYP_SYSTEM           's'
-#define NODE_TYP_THIRDPARTY       't'
-
-// NodeID Convention
-#define NODEID_GATEWAY          0
-#define NODEID_MAINDEVICE       1
-#define NODEID_MIN_DEVCIE       8
-#define NODEID_MAX_DEVCIE       63
-#define NODEID_MIN_REMOTE       64
-#define NODEID_MAX_REMOTE       127
-#define NODEID_PROJECTOR        128
-#define NODEID_KEYSIMULATOR     129
-#define NODEID_SUPERSENSOR      130
-#define NODEID_SMARTPHONE       139
-#define NODEID_MIN_GROUP        192
-#define NODEID_MAX_GROUP        223
-#define NODEID_RF_SCANNER       250
-#define NODEID_DUMMY            255
-#define BASESERVICE_ADDRESS     0xFE
-#define BROADCAST_ADDRESS       0xFF
-
-#define BR_MIN_VALUE            1
-#define CT_MIN_VALUE            2700
-#define CT_MAX_VALUE            6500
-#define CT_SCOPE                38    
-#define CT_STEP                 ((CT_MAX_VALUE-CT_MIN_VALUE)/10)
-#define LIGHT_PWM_THRESHOLD     5
 
 #define UNIQUE_ID_LEN           8
 
@@ -324,11 +271,6 @@ bool SendMyMessage();
 #define IS_RAINBOW(DevType)         ((DevType) >= devtypCRing3 && (DevType) <= devtypCRing1)
 #define IS_MIRAGE(DevType)          ((DevType) >= devtypMRing3 && (DevType) <= devtypMRing1)
 #define IS_VALID_REMOTE(DevType)    ((DevType) >= remotetypRFSimply && (DevType) <= remotetypRFEnhanced)
-
-#define IS_GROUP_NODEID(nID)       (nID >= NODEID_MIN_GROUP && nID <= NODEID_MAX_GROUP)
-#define IS_NOT_DEVICE_NODEID(nID)  ((nID < NODEID_MIN_DEVCIE || nID > NODEID_MAX_DEVCIE) && nID != NODEID_MAINDEVICE)
-#define IS_NOT_REMOTE_NODEID(nID)  (nID < NODEID_MIN_REMOTE || nID > NODEID_MAX_REMOTE)
-#define IS_MINE_SUBID(nSID)        ((nSID) == 0 || ((nSID) & gConfig.subID))
 
 //#define TEST
 

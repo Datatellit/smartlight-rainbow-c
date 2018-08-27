@@ -63,17 +63,7 @@ void testio()
 #define XLA_PRODUCT_Type          devtypMRing3
 #endif
 
-// RF channel for the sensor net, 0-127
-#define RF24_CHANNEL	   		100
-
 #define NO_RESTART_MODE
-
-// System Startup Status
-#define SYS_INIT                        0
-#define SYS_RESET                       1
-#define SYS_WAIT_NODEID                 2
-#define SYS_WAIT_PRESENTED              3
-#define SYS_RUNNING                     5
 
 // Delay
 //#define DELAY_5_ms                      0x1FF           // ticks, about 5ms
@@ -1380,7 +1370,12 @@ bool SetDeviceCCT(uint16_t _cct, uint8_t _ring) {
   } else if( _cct < CT_MIN_VALUE ) {
     _cct = CT_MIN_VALUE;
   }
+  bool bNeedChange = FALSE;
 #ifdef XRAINBOW
+  bNeedChange = (gConfig.mode != 0);
+  DEVST_R = 0;
+  DEVST_G = 0;
+  DEVST_B = 0;
   ClearRGB();
   gConfig.mode = 0;
 #endif
@@ -1388,7 +1383,7 @@ bool SetDeviceCCT(uint16_t _cct, uint8_t _ring) {
 #ifdef RING_INDIVIDUAL_COLOR
   
   uint8_t r_index = (_ring == RING_ID_ALL ? 0 : _ring - 1);
-  if( _cct != RINGST_WarmCold(r_index) ) {
+  if(bNeedChange || _cct != RINGST_WarmCold(r_index) ) {
 #ifdef GRADUAL_CCT    
     // Smoothly change CCT - set parameters
     delay_from[DELAY_TIM_CCT] = RINGST_WarmCold(r_index);
@@ -1416,7 +1411,7 @@ bool SetDeviceCCT(uint16_t _cct, uint8_t _ring) {
   
 #else
   
-  if( _cct != DEVST_WarmCold ) {
+  if(bNeedChange || _cct != DEVST_WarmCold ) {
 #ifdef GRADUAL_CCT    
     // Smoothly change CCT - set parameters
     delay_from[DELAY_TIM_CCT] = DEVST_WarmCold;
@@ -1454,6 +1449,12 @@ bool SetDeviceCCT(uint16_t _cct, uint8_t _ring) {
 
 // Gradually change RGB
 bool SetDeviceRGB(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _br,uint8_t _ring) {
+  bool bNeedChange = FALSE;
+#ifdef XRAINBOW
+  ClearSUNNY();
+  bNeedChange = (gConfig.mode!=1);
+  gConfig.mode = 1;
+#endif
   
 #ifdef RING_INDIVIDUAL_COLOR
   uint32_t newValue = cf_makeColorValue(_r, _g, _b);
@@ -1491,7 +1492,7 @@ bool SetDeviceRGB(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _br,uint8_t _ring)
   
 #else
   
-  if( _r != DEVST_R || _g != DEVST_G || _b != DEVST_B ) {
+  if(bNeedChange || _br != DEVST_Bright || _r != DEVST_R || _g != DEVST_G || _b != DEVST_B ) {
 #ifdef GRADUAL_RGB    
     // Smoothly change RGBW - set parameters
     delay_from[DELAY_TIM_RGB] = cf_makeColorValue(DEVST_R, DEVST_G, DEVST_B);
@@ -1530,6 +1531,13 @@ bool SetDeviceRGB(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _br,uint8_t _ring)
 // Gradually change on/off, brightness and cct in one
 bool SetDeviceStatus(bool _sw, uint8_t _br, uint16_t _cct, uint8_t _ring) {
 #ifdef XRAINBOW
+  if(gConfig.mode != 0)
+  { // rgb->sunny(br start with 0)
+    DEVST_Bright = 0;
+  } 
+  DEVST_R = 0;
+  DEVST_G = 0;
+  DEVST_B = 0;
   ClearRGB();
   gConfig.mode = 0;
 #endif

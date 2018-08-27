@@ -386,14 +386,13 @@ uint8_t ParseProtocol(){
           if(_lenPayl > 5)
           {      
               // Set RGB
-             if( _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || rcvMsg.payload.data[5] != RINGST_R(r_index) 
+             if(gConfig.mode != 1 || _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || rcvMsg.payload.data[5] != RINGST_R(r_index) 
                  || rcvMsg.payload.data[6] != RINGST_G(r_index) || rcvMsg.payload.data[7] != RINGST_B(r_index) ) 
              {
-               gConfig.mode = 1;
+               //gConfig.mode = 1;
                SetDeviceRGB(rcvMsg.payload.data[5], rcvMsg.payload.data[6], rcvMsg.payload.data[7],_Brightness,RING_ID_ALL);
                //LightRGBBRCtrl(rcvMsg.payload.data[5], rcvMsg.payload.data[6], rcvMsg.payload.data[7],_Brightness);
                //SetDeviceHue(_OnOff, _Brightness,rcvMsg.payload.data[5], rcvMsg.payload.data[6], rcvMsg.payload.data[7], _RingID);
-               ClearSUNNY();
                gIsStatusChanged = TRUE;
              }
           }
@@ -401,7 +400,7 @@ uint8_t ParseProtocol(){
           { // Set CCT
             if(_CCTValue >= CT_MIN_VALUE && _CCTValue <= CT_MAX_VALUE)
             {
-              if( _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || _CCTValue != RINGST_WarmCold(r_index) ) {
+              if(gConfig.mode != 0 || _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || _CCTValue != RINGST_WarmCold(r_index) ) {
                 SetDeviceStatus(_OnOff, _Brightness, _CCTValue, _RingID);
                 gIsStatusChanged = TRUE;
               }

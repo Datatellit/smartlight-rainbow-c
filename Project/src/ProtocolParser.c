@@ -396,7 +396,6 @@ uint8_t ParseProtocol(){
         } else if( IS_RAINBOW(gConfig.type) || IS_MIRAGE(gConfig.type) ) {
           if(_lenPayl > 5)
           {    
-             _CCTValue = rcvMsg.payload.data[3] * 256 + rcvMsg.payload.data[4];
               // Set RGB
              if(gConfig.mode != 1 || _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || rcvMsg.payload.data[5] != RINGST_R(r_index) 
                  || rcvMsg.payload.data[6] != RINGST_G(r_index) || rcvMsg.payload.data[7] != RINGST_B(r_index) ) 

@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1952429641
+Checksum=-227553397
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -22,7 +22,10 @@ GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
 [Breakpoints]
-Count=0
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\ProtocolParser.c}.259.5" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\Project\src\ProtocolParser.c}.383.17" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\Project\src\ProtocolParser.c}.237.5" 1 0 0 0 "" 0 ""
+Count=3
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""

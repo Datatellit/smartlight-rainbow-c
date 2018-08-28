@@ -258,6 +258,7 @@ uint8_t ParseProtocol(){
   case C_SET:
     if( (IS_MINE_SUBID(_sensor) || _specificNode) && !_isAck ) {
       uint8_t _lenPayl = miGetLength();
+      offdelaytick = -1;
       if(gConfig.filter > 0)
       {
         stopAllStateTimer();
@@ -274,10 +275,11 @@ uint8_t ParseProtocol(){
             return 1;
           }
         }
-        else if( _lenPayl == 3)
+        else if( _lenPayl >= 3)
         {
           uint8_t _OnOff = (rcvMsg.payload.data[0] == DEVICE_SW_TOGGLE ? DEVST_OnOff == DEVICE_SW_OFF : rcvMsg.payload.bValue == DEVICE_SW_ON);
-          uint8_t unit = rcvMsg.payload.data[1];
+          uint8_t unit = rcvMsg.payload.data[1] & 0x0F;
+          uint8_t isGradual = rcvMsg.payload.data[1]>>4;
           uint8_t time = rcvMsg.payload.data[2];
           if(unit == MINUTE_UNIT)
           {
@@ -290,6 +292,15 @@ uint8_t ParseProtocol(){
           else
           {
             offdelaytick = (int32_t)time * 100;
+          }
+          uint8_t br = 0;
+          if(_lenPayl > 3)
+          {
+            br = rcvMsg.payload.data[3];
+            if(br > 0)
+            {
+              SetDeviceBrightness( br,0);         
+            }
           }
         }
 
@@ -376,7 +387,7 @@ uint8_t ParseProtocol(){
         
         bool _OnOff = rcvMsg.payload.data[1];
         uint8_t _Brightness = rcvMsg.payload.data[2];
-        uint16_t _CCTValue = rcvMsg.payload.data[3] * 256 + rcvMsg.payload.data[4];
+        uint16_t _CCTValue = rcvMsg.payload.data[4] * 256 + rcvMsg.payload.data[3];
         if( IS_SUNNY(gConfig.type) ) {         
           if( _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || _CCTValue != RINGST_WarmCold(r_index) ) {
             SetDeviceStatus(_OnOff, _Brightness, _CCTValue, _RingID);
@@ -384,7 +395,8 @@ uint8_t ParseProtocol(){
           }
         } else if( IS_RAINBOW(gConfig.type) || IS_MIRAGE(gConfig.type) ) {
           if(_lenPayl > 5)
-          {      
+          {    
+             _CCTValue = rcvMsg.payload.data[3] * 256 + rcvMsg.payload.data[4];
               // Set RGB
              if(gConfig.mode != 1 || _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || rcvMsg.payload.data[5] != RINGST_R(r_index) 
                  || rcvMsg.payload.data[6] != RINGST_G(r_index) || rcvMsg.payload.data[7] != RINGST_B(r_index) ) 

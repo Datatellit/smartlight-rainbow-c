@@ -447,7 +447,7 @@ void LoadConfig()
 #endif
   }
   if(gConfig.rptTimes == 0 ) gConfig.rptTimes = 2;
-  gConfig.rfChannel = 0x73;
+  //gConfig.rfChannel = 0x73;
 }
 
 void ResetNodeToRegister()
@@ -1331,7 +1331,7 @@ bool SetDeviceBrightness(uint8_t _br, uint8_t _ring) {
     delay_up[DELAY_TIM_BR] = (delay_from[DELAY_TIM_BR] < delay_to[DELAY_TIM_BR]);
     delay_step[DELAY_TIM_BR] = GetSteps(delay_from[DELAY_TIM_BR], delay_to[DELAY_TIM_BR], FALSE);
 #endif
-    
+    //if(_br < BR_MIN_VALUE) _br = BR_MIN_VALUE;
     bool newSW = (_br >= BR_MIN_VALUE);
     DEVST_Bright = _br;
     if( DEVST_OnOff != newSW ) {

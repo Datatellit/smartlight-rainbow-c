@@ -109,7 +109,7 @@ uint8_t ParseProtocol(){
           GotNodeID();
           // Increase brightness to indicate ID required
           if( gConfig.cntRFReset < MAX_RF_RESET_TIME ) {
-            SetDeviceBrightness(DEFAULT_BRIGHTNESS + 10, RING_ID_ALL);
+            //SetDeviceBrightness(DEFAULT_BRIGHTNESS + 10, RING_ID_ALL);
             Msg_DevBrightness(_sender);
             return 1;
           }
@@ -339,6 +339,7 @@ uint8_t ParseProtocol(){
         } else {
           _Brightness = rcvMsg.payload.bValue;
         }
+        if(_Brightness > 0 && _Brightness < BR_MIN_VALUE) _Brightness = BR_MIN_VALUE;
         SetDeviceBrightness(_Brightness, RING_ID_ALL);
         if( _needAck ) {
           bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
@@ -387,6 +388,7 @@ uint8_t ParseProtocol(){
         
         bool _OnOff = rcvMsg.payload.data[1];
         uint8_t _Brightness = rcvMsg.payload.data[2];
+        if(_Brightness > 0 && _Brightness < BR_MIN_VALUE) _Brightness = BR_MIN_VALUE;
         uint16_t _CCTValue = rcvMsg.payload.data[4] * 256 + rcvMsg.payload.data[3];
         if( IS_SUNNY(gConfig.type) ) {         
           if( _OnOff != RINGST_OnOff(r_index) || _Brightness != RINGST_Bright(r_index) || _CCTValue != RINGST_WarmCold(r_index) ) {

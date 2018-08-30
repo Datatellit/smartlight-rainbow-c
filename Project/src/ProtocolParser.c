@@ -259,9 +259,9 @@ uint8_t ParseProtocol(){
     if( (IS_MINE_SUBID(_sensor) || _specificNode) && !_isAck ) {
       uint8_t _lenPayl = miGetLength();
       offdelaytick = -1;
-      if(gConfig.filter > 0)
+      if(gConfig.filter > 0 && _type != V_STATUS)
       {
-        stopAllStateTimer();
+        SetDeviceFilter(FILTER_SP_EF_NONE);
       }   
       if( _type == V_STATUS ) {
         if( _lenPayl == 1)

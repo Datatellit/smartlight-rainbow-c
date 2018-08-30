@@ -1732,6 +1732,15 @@ bool SetDeviceFilter(uint8_t _filter) {
   }
 #if defined(XRAINBOW) || defined(XMIRAGE)    
   else if( _filter == FILTER_SP_EF_FLORID || _filter == FILTER_SP_EF_FAST_FLORID ) {
+    ClearSUNNY();  
+    if(gConfig.mode != 1)
+    {
+      gConfig.mode = 1;
+      DEVST_R = 255;
+      DEVST_G = 128;
+      DEVST_B = 0;
+      ChangeDeviceRGBStatus(TRUE,DEVST_Bright,DEVST_R,DEVST_G,DEVST_B,RING_ID_ALL);
+    }
     StartDeviceColorFade(TRUE, _filter == FILTER_SP_EF_FAST_FLORID);
   }
 #endif

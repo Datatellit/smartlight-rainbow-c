@@ -23,46 +23,11 @@
 //#define EN_SENSOR_MQ2
 //#define EN_SENSOR_MQ7
 
-// Serial Command
-#define UART_CMD_HELLO                  0
-#define UART_CMD_CCT                    1
-#define UART_CMD_RGBW                   2
-#define UART_CMD_HELLO_ACK              16
-
-#define UNIQUE_ID_LEN           8
-
-// Delayed operation timers
-#define DELAY_TIMERS            8
-#define DELAY_TIM_ONOFF         0
-#define DELAY_TIM_BR            1
-#define DELAY_TIM_CCT           2
-#define DELAY_TIM_RGB           3
-#define DELAY_TIM_MSG           7
-
-// Comment off the line to disable gradual brightness on or off
-#define GRADUAL_ONOFF
-#define GRADUAL_CCT
-//#define GRADUAL_RGB
-#define DEFAULT_BRIGHTNESS      65
-#define BRIGHTNESS_STEP         1
-#define MAX_STEP_TIMES          62
-#define MAX_FASTSTEP_TIMES      20
-#define CCT_STEP                50
-#define RGB_STEP                3
-
-// WATT regulation method
-/// Option 0: no restriction
-/// Option 1: percentage
-/// Option 2: percentage + linear
-/// Option 3: percentage + quadratic
-/// Option 4: percentage + cubic function
-/// Option 10: percentage + table
-#define WATT_RM_NO_RESTRICTION          0
-#define WATT_RM_PERCENTAGE              1
-#define WATT_RM_LINEAR_PERCENTAGE       2
-#define WATT_RM_QUADRATIC_PERCENTAGE    3
-#define WATT_RM_CUBIC_PERCENTAGE        4
-#define WATT_RM_TABLE_PERCENTAGE        10
+#define V1
+#ifdef V1
+#define NODEID_MAINDEVICE 1
+#define IS_NOT_DEVICE_NODEID(nID)  ((nID < NODEID_MIN_LAMP || nID > NODEID_MAX_LAMP) && nID != NODEID_MAINDEVICE)
+#endif
 
 // Keep alive message interval, around 6 seconds
 #define RTE_TM_KEEP_ALIVE               500    // about 5s (500 * 10ms)
@@ -121,22 +86,6 @@ typedef struct
   UC L2                       :8;           // Length of thread 2
   UC L3                       :8;           // Length of thread 3
 } Hue_t;
-
-
-// I_GET_NONCE sub-type
-enum {
-    SCANNER_PROBE = 0,
-    SCANNER_SETUP_RF,           // by NodeID & SubID
-    SCANNER_SETUPDEV_RF,        // by UniqueID
-    
-    SCANNER_GETCONFIG = 8,      // by NodeID & SubID
-    SCANNER_SETCONFIG,
-    SCANNER_GETDEV_CONFIG,      // by UniqueID
-    SCANNER_SETDEV_CONFIG,
-    
-    SCANNER_TEST_NODE = 16,     // by NodeID & SubID
-    SCANNER_TEST_DEVICE,        // by UniqueID
-};
 
 // Xlight Application Identification
 #define XLA_VERSION               0x08
@@ -271,28 +220,5 @@ bool SendMyMessage();
 #define IS_RAINBOW(DevType)         ((DevType) >= devtypCRing3 && (DevType) <= devtypCRing1)
 #define IS_MIRAGE(DevType)          ((DevType) >= devtypMRing3 && (DevType) <= devtypMRing1)
 #define IS_VALID_REMOTE(DevType)    ((DevType) >= remotetypRFSimply && (DevType) <= remotetypRFEnhanced)
-
-//#define TEST
-
-#ifdef TEST
-#define     PB5_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_5)
-#define     PB4_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_4)
-#define     PB3_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_3)
-#define     PB2_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_2)
-#define     PB1_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_1)
-#define     PB0_Low                GPIO_WriteLow(GPIOB , GPIO_PIN_0)
-#define     PD1_Low                GPIO_WriteLow(GPIOD , GPIO_PIN_1)
-#define     PD2_Low                GPIO_WriteLow(GPIOD , GPIO_PIN_2)
-#define     PC1_Low                GPIO_WriteLow(GPIOC , GPIO_PIN_1)
-#define     PB5_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_5)
-#define     PB4_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_4)
-#define     PB3_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_3)
-#define     PB2_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_2)
-#define     PB1_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_1)
-#define     PB0_High                GPIO_WriteHigh(GPIOB , GPIO_PIN_0)
-#define     PD1_High                GPIO_WriteHigh(GPIOD , GPIO_PIN_1)
-#define     PD2_High                GPIO_WriteHigh(GPIOD , GPIO_PIN_2)
-#define     PC1_High                GPIO_WriteHigh(GPIOC , GPIO_PIN_1)
-#endif
 
 #endif /* __GLOBAL_H */

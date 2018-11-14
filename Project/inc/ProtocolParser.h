@@ -17,7 +17,7 @@ void Msg_DevBrightness(uint8_t _to);
 void Msg_DevFilter(uint8_t _to);
 void Msg_DevCCT(uint8_t _to);
 void Msg_DevStatus(uint8_t _to, uint8_t _ring);
-void Msg_DevTopology(uint8_t _to, uint8_t _ring);
+//void Msg_DevTopology(uint8_t _to, uint8_t _ring);
 
 bool ProcessOutputCfgMsg();
 

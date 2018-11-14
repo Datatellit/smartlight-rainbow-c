@@ -108,12 +108,6 @@
         <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\debugDefine.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\delay.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\delay.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\FlashDataStorage.c</name>
       </file>
       <file>
@@ -162,9 +156,6 @@
         <name>$PROJ_DIR$\Project\inc\_global.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Project\inc\ADC1Dev.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\Project\inc\color_factory.h</name>
       </file>
       <file>
@@ -182,9 +173,6 @@
     </group>
     <group>
       <name>src</name>
-      <file>
-        <name>$PROJ_DIR$\Project\src\ADC1Dev.c</name>
-      </file>
       <file>
         <name>$PROJ_DIR$\Project\src\color_factory.c</name>
       </file>

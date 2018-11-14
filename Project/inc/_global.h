@@ -178,6 +178,7 @@ bool SetDeviceRGB(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _br,uint8_t _ring)
 bool SetDeviceStatus(bool _sw, uint8_t _br, uint16_t _cct, uint8_t _ring);
 //bool SetDeviceHue(bool _sw, uint8_t _br, uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _ring);
 bool SetDeviceFilter(uint8_t _filter);
+void ChangeBRByTime(uint8_t from,uint8_t to,uint32_t timetick);
 void stopAllStateTimer();
 void tmrProcess();
 void idleProcess();

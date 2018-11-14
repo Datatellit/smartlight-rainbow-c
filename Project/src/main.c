@@ -1,5 +1,5 @@
 #include "_global.h"
-#include "delay.h"
+//#include "delay.h"
 #include "rf24l01.h"
 #include "MyMessage.h"
 #include "xliNodeConfig.h"
@@ -1676,6 +1676,30 @@ bool SetDeviceHue(bool _sw, uint8_t _br, uint8_t _r, uint8_t _g, uint8_t _b, uin
 #endif  
 }*/
 
+// change BR gradually pass by some time
+// timetick (every 5ms) eg:10 - 50ms
+void ChangeBRByTime(uint8_t from,uint8_t to,uint32_t timetick) {
+  //if(timetick > 100) gStateSetDelay = 1;
+   // Smoothly change brightness - set parameters
+  delay_from[DELAY_TIM_BR] = from;
+  delay_to[DELAY_TIM_BR] = to; 
+  uint8_t brScope = 0;
+  if(from > to ) {
+    delay_up[DELAY_TIM_BR] = FALSE;
+    brScope = from - to;
+  } else {
+    delay_up[DELAY_TIM_BR] = TRUE;
+    brScope = to - from;
+  }
+  delay_step[DELAY_TIM_BR] = GetSteps(from, to, TRUE);
+  // Smoothly change brightness - set timer
+  delay_timer[DELAY_TIM_BR] = timetick*delay_step[DELAY_TIM_BR]/brScope;
+  delay_tick[DELAY_TIM_BR] = DELAY_5_ms;
+  delay_handler[DELAY_TIM_BR] = ChangeDeviceBR;
+  delay_tag[DELAY_TIM_BR] = RING_ID_ALL;
+  BF_SET(delay_func, DEVST_OnOff, DELAY_TIM_BR, 1); // Enable BR Dimmer operation
+}
+
 // Start breathing effect
 void StartDeviceBreath(bool _init, bool _fast) {
    // Smoothly change brightness - set parameters
@@ -1746,13 +1770,17 @@ bool SetDeviceFilter(uint8_t _filter) {
 #endif
   
   if( _filter != gConfig.filter ) {
+    uint8_t oldfilter = gConfig.filter;
     gConfig.filter = _filter;
     gIsStatusChanged = TRUE;
     if( _filter == FILTER_SP_EF_NONE ) {
       // Stop Timers
       BF_SET(delay_func, 0, DELAY_TIM_ONOFF, 4);
       // Restore normal brightness
-      ChangeDeviceBR(DEVST_Bright, RING_ID_ALL);
+      if(oldfilter != FILTER_SP_EF_GRADUAL_CHANGE)
+      {
+        ChangeDeviceBR(DEVST_Bright, RING_ID_ALL);
+      }  
     }
     return TRUE;
   }
@@ -1796,11 +1824,6 @@ bool isTimerCompleted(uint8_t _tmr) {
   }
   
   return bFinished;
-}
-
-void stopAllStateTimer()
-{
-  BF_SET(delay_func, 0, DELAY_TIM_ONOFF, 4);
 }
 
 // Execute timer operations
@@ -1854,6 +1877,20 @@ void idleProcess() {
         delay_tick[_tmr] = delay_timer[_tmr];
         // Move a step and execute operation
         if( isTimerCompleted(_tmr) ) {
+          if(/*gStateSetDelay == 1*/ gConfig.filter == FILTER_SP_EF_GRADUAL_CHANGE)
+          {
+            //gStateSetDelay = 0;
+            if(delay_to[_tmr]>0)
+            {
+              DEVST_Bright = delay_to[_tmr];
+            }
+            else
+            {
+              DEVST_OnOff = 0;
+            }
+            gConfig.filter = FILTER_SP_EF_NONE;
+            gIsStatusChanged = TRUE;
+          }
           // Stop timer - disable further operation
           if( DEVST_OnOff != DEVICE_SW_ON ) {
             BF_SET(delay_func, 0, DELAY_TIM_ONOFF, 4);

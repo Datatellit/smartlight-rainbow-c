@@ -246,11 +246,11 @@ uint8_t ParseProtocol(){
           uint8_t _RingID = rcvMsg.payload.data[0];
           Msg_DevStatus(_sender, _RingID);
           return 1;
-        } else if( _type == V_DISTANCE ) { // Topology
+        }/* else if( _type == V_DISTANCE ) { // Topology
           uint8_t _RingID = rcvMsg.payload.data[0];
           Msg_DevTopology(_sender, _RingID);
           return 1;
-        }
+        }*/
       }
     }    
     break;
@@ -259,9 +259,16 @@ uint8_t ParseProtocol(){
     if( (IS_MINE_SUBID(_sensor) || _specificNode) && !_isAck ) {
       uint8_t _lenPayl = miGetLength();
       offdelaytick = -1;
-      if(gConfig.filter > 0 && _type != V_STATUS)
+      if(gConfig.filter > 0)
       {
-        SetDeviceFilter(FILTER_SP_EF_NONE);
+        if(gConfig.filter == FILTER_SP_EF_GRADUAL_CHANGE)
+        {
+          SetDeviceFilter(FILTER_SP_EF_NONE);
+        }
+        else
+        {
+          if(_type != V_STATUS) SetDeviceFilter(FILTER_SP_EF_NONE);
+        }    
       }   
       if( _type == V_STATUS ) {
         if( _lenPayl == 1)
@@ -425,7 +432,7 @@ uint8_t ParseProtocol(){
           Msg_DevStatus(_sender, _RingID);
           return 1;
         }
-      } else if( _type == V_DISTANCE ) { // Topology
+      }/* else if( _type == V_DISTANCE ) { // Topology
         // Get main lamp(ID:1) Length of threads
         uint8_t _RingID = rcvMsg.payload.data[0];
         if( IS_MIRAGE(gConfig.type) ) {
@@ -436,8 +443,21 @@ uint8_t ParseProtocol(){
           Msg_DevTopology(_sender, _RingID);
           return 1;
         }          
-      } else if( _type == V_VAR1 ) { // Special effect
-        SetDeviceFilter(rcvMsg.payload.bValue);
+      } */else if( _type == V_VAR1 ) { // Special effect
+        SetDeviceFilter(rcvMsg.payload.data[0]);
+        if(rcvMsg.payload.data[0] == FILTER_SP_EF_GRADUAL_CHANGE)
+        {
+          uint16_t time = ((rcvMsg.payload.data[2] << 8) | rcvMsg.payload.data[1]);
+          uint8_t frombr = rcvMsg.payload.data[3];
+          uint8_t tobr = rcvMsg.payload.data[4];      
+          if(frombr > 0)
+          {
+            SetDeviceBrightness( frombr,0);         
+          }
+          uint32_t delaytick = (int32_t)time * 200;
+          ChangeBRByTime(frombr,tobr,delaytick); //5ms timer
+          //return 1;
+        }       
         if( _needAck ) {
           bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
           Msg_DevFilter(_sender);
@@ -592,7 +612,7 @@ void Msg_DevStatus(uint8_t _to, uint8_t _ring) {
 }
 
 // Prepare topology message
-void Msg_DevTopology(uint8_t _to, uint8_t _ring) {
+/*void Msg_DevTopology(uint8_t _to, uint8_t _ring) {
   uint8_t payl_len, r_index;
   
   if( _ring > MAX_RING_NUM ) _ring = RING_ID_ALL;
@@ -635,7 +655,7 @@ void Msg_DevTopology(uint8_t _to, uint8_t _ring) {
   moSetLength(payl_len);
   moSetPayloadType(P_CUSTOM);
   bMsgReady = 1;
-}
+}*/
 
 // Prepare device filter message
 void Msg_DevFilter(uint8_t _to) {

@@ -1025,7 +1025,7 @@ int main( void ) {
       if( !bMsgReady ) {
         // Check Keep Alive Timer
         if( mTimerKeepAlive > RTE_TM_KEEP_ALIVE ) {
-          Msg_DevBrightness(NODEID_GATEWAY);
+          Msg_DevStatus(NODEID_GATEWAY,RING_ID_ALL);
         }
       }
 #endif      
@@ -1058,6 +1058,18 @@ int main( void ) {
 
 // Immediately change brightness and cct
 void ChangeDeviceStatus(bool _sw, uint8_t _br, uint16_t _cct, uint8_t _ring) {
+  if(gConfig.filter == FILTER_SP_EF_GRADUAL_CHANGE)
+  {
+    if(_br>0)
+    {
+      DEVST_Bright = _br;
+    }
+    else
+    {
+      DEVST_OnOff = 0;
+    }
+    gIsStatusChanged = TRUE;
+  }
   if(gConfig.mode == 1)
   { // rgb mode
     LightRGBBRCtrl(DEVST_R,DEVST_G,DEVST_B,_br);
@@ -1682,16 +1694,17 @@ void ChangeBRByTime(uint8_t from,uint8_t to,uint32_t timetick) {
   //if(timetick > 100) gStateSetDelay = 1;
    // Smoothly change brightness - set parameters
   delay_from[DELAY_TIM_BR] = from;
-  delay_to[DELAY_TIM_BR] = to; 
   uint8_t brScope = 0;
   if(from > to ) {
     delay_up[DELAY_TIM_BR] = FALSE;
+    if(to >0 && to <BR_MIN_VALUE) to = BR_MIN_VALUE;
     brScope = from - to;
   } else {
     delay_up[DELAY_TIM_BR] = TRUE;
     brScope = to - from;
   }
-  delay_step[DELAY_TIM_BR] = GetSteps(from, to, TRUE);
+  delay_to[DELAY_TIM_BR] = to; 
+  delay_step[DELAY_TIM_BR] = GetSteps(from, to, FALSE);
   // Smoothly change brightness - set timer
   delay_timer[DELAY_TIM_BR] = timetick*delay_step[DELAY_TIM_BR]/brScope;
   delay_tick[DELAY_TIM_BR] = DELAY_5_ms;

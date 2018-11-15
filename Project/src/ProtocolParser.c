@@ -237,10 +237,10 @@ uint8_t ParseProtocol(){
     if( _needAck ) {
       if( IS_MINE_SUBID(_sensor) || _specificNode ) {
         if( _type == V_STATUS || _type == V_PERCENTAGE ) {
-          Msg_DevBrightness(_sender);
+          Msg_DevStatus(_sender, RING_ID_ALL);
           return 1;
         } else if( _type == V_LEVEL ) { // CCT
-          Msg_DevCCT(_sender);
+          Msg_DevStatus(_sender, RING_ID_ALL);
           return 1;
         } else if( _type == V_RGBW ) { // Hue
           uint8_t _RingID = rcvMsg.payload.data[0];
@@ -278,7 +278,7 @@ uint8_t ParseProtocol(){
           SetDeviceOnOff(_OnOff, RING_ID_ALL);
           if( _needAck ) {
             bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
-            Msg_DevBrightness(_sender);
+            Msg_DevStatus(_sender,RING_ID_ALL);
             return 1;
           }
         }
@@ -350,7 +350,7 @@ uint8_t ParseProtocol(){
         SetDeviceBrightness(_Brightness, RING_ID_ALL);
         if( _needAck ) {
           bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
-          Msg_DevBrightness(_sender);
+          Msg_DevStatus(_sender,RING_ID_ALL);
           return 1;
         }
       } else if( _type == V_LEVEL ) { // CCT
@@ -380,7 +380,7 @@ uint8_t ParseProtocol(){
         SetDeviceCCT(_CCTValue, RING_ID_ALL);
         if( _needAck ) {
           bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
-          Msg_DevCCT(_sender);
+          Msg_DevStatus(_sender,RING_ID_ALL);
           return 1;
         }
       } else if( _type == V_RGBW ) { // RGBW
@@ -460,7 +460,7 @@ uint8_t ParseProtocol(){
         }       
         if( _needAck ) {
           bDelaySend = (rcvMsg.header.destination == BROADCAST_ADDRESS);
-          Msg_DevFilter(_sender);
+          Msg_DevStatus(_sender, RING_ID_ALL);
           return 1;
         }
       }
@@ -584,9 +584,11 @@ void Msg_DevStatus(uint8_t _to, uint8_t _ring) {
     if( IS_SUNNY(gConfig.type) ) {
       sndMsg.payload.data[payl_len++] = (uint8_t)(RINGST_WarmCold(r_index) % 256);
       sndMsg.payload.data[payl_len++] = (uint8_t)(RINGST_WarmCold(r_index) / 256);
+      sndMsg.payload.data[payl_len++] = gConfig.filter;
     } else if( IS_RAINBOW(gConfig.type) || IS_MIRAGE(gConfig.type) ) {
       sndMsg.payload.data[payl_len++] = (uint8_t)(RINGST_WarmCold(r_index) % 256);
       sndMsg.payload.data[payl_len++] = (uint8_t)(RINGST_WarmCold(r_index) / 256);
+      sndMsg.payload.data[payl_len++] = gConfig.filter;
       if(gConfig.mode == 1)
       {
         sndMsg.payload.data[payl_len++] = RINGST_R(r_index);

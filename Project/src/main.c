@@ -621,7 +621,7 @@ bool SendMyMessage() {
 void GotNodeID() {
   mGotNodeID = TRUE;
   UpdateNodeAddress(NODEID_GATEWAY);
-  gNeedSaveBackup = TRUE;
+  gIsConfigChanged = TRUE;
 }
 
 void GotPresented() {
